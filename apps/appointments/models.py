@@ -11,7 +11,7 @@ class StatusAppointment(models.TextChoices):
 
 class Appointment(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL)
+    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
     services = models.ManyToManyField(Service)
     status = models.CharField(choices=StatusAppointment.choices, default=StatusAppointment.AGENDADO, max_length=50)
     time = models.DateTimeField(verbose_name='Data do agendamento', default=timezone.now, blank=False, null=False)
