@@ -6,6 +6,11 @@ class Client(models.Model):
     email = models.EmailField(unique=True)
     registration_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
