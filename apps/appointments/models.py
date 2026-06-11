@@ -45,4 +45,7 @@ class Appointment(models.Model):
         ordering = ['-start_time']
 
     def __str__(self):
-        return f"{self.client} - {self.start_time.strftime('%d/%m/%Y %H:%M')}"
+        date = self.start_time.strftime('%d/%m/%Y')
+        start = self.start_time.strftime('%H:%M')
+        end = self.end_time.strftime('%H:%M') 
+        return f"{self.client.name} | {self.employee.name} | {date} {start} às {end}"

@@ -13,6 +13,6 @@ class Service(models.Model):
         ordering = ['-price']
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - R${self.price}'
 
 
