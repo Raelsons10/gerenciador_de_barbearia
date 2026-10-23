@@ -6,6 +6,8 @@ from apps.appointments.models import Appointment
 from apps.clients.models import Client
 from apps.employees.models import Employee
 from apps.services.models import Service
+
+from apps.appointments.scheduling import find_conflicting_appointments
 # Create your tests here.
 class AppointmentOverlapTestCase(TestCase):
     def setUp(self):
@@ -28,3 +30,16 @@ class AppointmentOverlapTestCase(TestCase):
         expected_end_time = timezone.make_aware(datetime(2026, 10, 25, 14, 30))
 
         self.assertEqual(self.appointment.end_time, expected_end_time)
+
+    
+    def test_overlapping_appointment_is_conflict(self):
+            new_start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+
+            new_end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
+
+            result = find_conflicting_appointments(
+                employee=self.employee_base,
+                start=new_start_base,
+                end=new_end_base)
+            
+            self.assertIn(self.appointment, result)
