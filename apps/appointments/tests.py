@@ -33,13 +33,26 @@ class AppointmentOverlapTestCase(TestCase):
 
     
     def test_overlapping_appointment_is_conflict(self):
-            new_start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        new_start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
 
-            new_end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
+        new_end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
 
-            result = find_conflicting_appointments(
-                employee=self.employee_base,
-                start=new_start_base,
-                end=new_end_base)
-            
-            self.assertIn(self.appointment, result)
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=new_start_base,
+            end=new_end_base)
+        
+        self.assertIn(self.appointment, result)
+
+    def test_scheduling_begins_at_the_limit_interval(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 40))
+
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 15, 10))
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertNotIn(self.appointment, result)
