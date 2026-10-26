@@ -68,3 +68,27 @@ class AppointmentOverlapTestCase(TestCase):
         )
 
         self.assertIn(self.appointment, result)
+
+    def test_end_of_the_appointment_within_the_safety_interval(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 13, 20))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 13, 55))
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertIn(self.appointment, result)
+
+    def test_ends_exactly_ten_minutes_before_the_next_appointment(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 13, 20))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 13, 50))      
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertNotIn(self.appointment, result)
