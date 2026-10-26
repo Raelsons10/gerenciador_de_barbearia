@@ -136,3 +136,28 @@ class AppointmentOverlapTestCase(TestCase):
         )
 
         self.assertNotIn(self.appointment, result)
+
+    def test_appointment_is_conflict_without_exclude_appointment(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45)) 
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertIn(self.appointment, result)
+
+    def test_appointment_is_ignored_with_exclude_appointment(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base,
+            exclude_appointment=self.appointment
+        ) 
+
+        self.assertNotIn(self.appointment, result)       
