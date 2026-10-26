@@ -56,3 +56,15 @@ class AppointmentOverlapTestCase(TestCase):
         )
 
         self.assertNotIn(self.appointment, result)
+
+    def test_scheduling_begins_within_the_interval(self):
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 35))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 15, 5))
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertIn(self.appointment, result)
