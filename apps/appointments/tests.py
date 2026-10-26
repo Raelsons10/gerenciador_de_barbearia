@@ -92,3 +92,18 @@ class AppointmentOverlapTestCase(TestCase):
         )
 
         self.assertNotIn(self.appointment, result)
+
+    def test_appointment_of_another_employee_is_not_conflict(self):
+        new_employee = Employee.objects.create(name="Pedro", email="pedro@gmail.com")
+
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
+
+        result = find_conflicting_appointments(
+            employee=new_employee,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertNotIn(self.appointment, result)
+        
