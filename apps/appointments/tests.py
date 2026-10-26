@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 from datetime import timedelta, datetime
 
-from apps.appointments.models import Appointment
+from apps.appointments.models import Appointment, StatusAppointment
 from apps.clients.models import Client
 from apps.employees.models import Employee
 from apps.services.models import Service
@@ -106,4 +106,33 @@ class AppointmentOverlapTestCase(TestCase):
         )
 
         self.assertNotIn(self.appointment, result)
-        
+
+    def test_cancelled_appointment_is_not_conflict(self):
+        self.appointment.status = StatusAppointment.CANCELADO
+        self.appointment.save(update_fields=['status'])
+
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))          
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base         
+        )
+
+        self.assertNotIn(self.appointment, result)
+
+    def test_completed_appointment_is_not_conflict(self):
+        self.appointment.status = StatusAppointment.CONCLUIDO
+        self.appointment.save(update_fields=['status'])
+
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))          
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base          
+        )
+
+        self.assertNotIn(self.appointment, result)
