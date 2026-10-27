@@ -160,4 +160,30 @@ class AppointmentOverlapTestCase(TestCase):
             exclude_appointment=self.appointment
         ) 
 
-        self.assertNotIn(self.appointment, result)       
+        self.assertNotIn(self.appointment, result)     
+
+    def test_returns_all_conflicting_appointments(self):
+        client = Client.objects.create(name="Paulo", email="paulo@teste.com")
+        service = Service.objects.create(name="Barba", duration=timedelta(minutes=30), price=10)
+
+        second_appointment = Appointment.objects.create(
+            client=client,
+            employee=self.employee_base,
+            start_time = timezone.make_aware(datetime(2026, 10, 25, 14, 40))
+        )
+
+        second_appointment.services.add(service)
+        second_appointment.refresh_from_db()
+
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 14, 15))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 14, 45))
+
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertIn(self.appointment, result)
+        self.assertIn(second_appointment, result)
+        self.assertEqual(len(result), 2)
