@@ -188,6 +188,23 @@ class AppointmentOverlapTestCase(TestCase):
         self.assertIn(second_appointment, result)
         self.assertEqual(len(result), 2)
 
+    def test_appointment_without_service_is_treated_as_zero_duration(self):
+        appointment = Appointment.objects.create(
+            client=self.client_base,
+            employee=self.employee_base,
+            start_time=timezone.make_aware(datetime(2026, 10, 25, 16, 0)),
+            status=StatusAppointment.AGENDADO
+        )
+
+        start_base = timezone.make_aware(datetime(2026, 10, 25, 16, 5))
+        end_base = timezone.make_aware(datetime(2026, 10, 25, 16, 35))
+        result = find_conflicting_appointments(
+            employee=self.employee_base,
+            start=start_base,
+            end=end_base
+        )
+
+        self.assertEqual(result, [appointment])
 class AppointmentStrTestCase(TestCase):
     def setUp(self):
         self.client_base = Client.objects.create(name="Ana", email="ana@gmail.com")
