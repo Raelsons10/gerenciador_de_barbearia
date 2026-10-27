@@ -187,3 +187,38 @@ class AppointmentOverlapTestCase(TestCase):
         self.assertIn(self.appointment, result)
         self.assertIn(second_appointment, result)
         self.assertEqual(len(result), 2)
+
+class AppointmentStrTestCase(TestCase):
+    def setUp(self):
+        self.client_base = Client.objects.create(name="Ana", email="ana@gmail.com")
+        self.employee_base = Employee.objects.create(name="João", email="joao@gmail.com")
+        self.service_base = Service.objects.create(name="Degradê", duration=timedelta(minutes=30), price=20)
+
+    def test_str_displays_local_time_with_service(self):
+        appointment = Appointment.objects.create(
+            client=self.client_base,
+            employee=self.employee_base,
+            start_time=timezone.make_aware(datetime(2026, 10, 25, 14, 0))
+        )
+
+        appointment.services.add(self.service_base)
+        appointment.refresh_from_db()
+
+        self.assertEqual(
+            str(appointment),
+            "Ana | João | 25/10/2026 14:00 às 14:30"
+        )
+
+    def test_str_displays_notice_without_services(self):
+        appointment = Appointment.objects.create(
+            client=self.client_base,
+            employee=self.employee_base,
+            start_time=timezone.make_aware(datetime(2026, 10, 25, 14, 0))
+        )
+
+        appointment.refresh_from_db()
+
+        self.assertEqual(
+            str(appointment),
+            "Ana | João | 25/10/2026 14:00 | Sem serviços"
+        )
