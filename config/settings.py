@@ -10,13 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-import os
-from dotenv import load_dotenv
 
 load_dotenv(BASE_DIR / '.env')
 
@@ -27,6 +28,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# Time reserved after each appointment ends, before the barber can take another one.
+APPOINTMENT_BUFFER = timedelta(minutes=10)
+
+# Minimum time after an appointment starts before it can be marked as completed.
+MIN_TIME_BEFORE_COMPLETING = timedelta(minutes=5)
 
 ALLOWED_HOSTS = []
 

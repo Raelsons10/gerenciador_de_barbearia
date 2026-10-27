@@ -1,4 +1,5 @@
 import datetime
+from django.utils import timezone
 from django.db import models
 from django.db.models import Sum
 from apps.clients.models import Client
@@ -45,7 +46,14 @@ class Appointment(models.Model):
         ordering = ['-start_time']
 
     def __str__(self):
-        date = self.start_time.strftime('%d/%m/%Y')
-        start = self.start_time.strftime('%H:%M')
-        end = self.end_time.strftime('%H:%M') 
-        return f"{self.client.name} | {self.employee.name} | {date} {start} às {end}"
+        moment = timezone.localtime(self.start_time)
+        date = moment.strftime('%d/%m/%Y')
+        start = moment.strftime('%H:%M')
+
+        if self.end_time is not None:
+            end_moment = timezone.localtime(self.end_time)
+            end = end_moment.strftime('%H:%M') 
+            
+            return f"{self.client.name} | {self.employee.name} | {date} {start} às {end}"
+        else:
+            return f"{self.client.name} | {self.employee.name} | {date} {start} | Sem serviços"
