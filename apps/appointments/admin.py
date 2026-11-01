@@ -3,7 +3,7 @@ from apps.appointments.models import Appointment
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('client', 'employee', 'display_services', 'start_time', 'end_time', 'status', 'total_duration')
+    list_display = ('client', 'employee', 'display_services', 'start_time', 'display_end_time', 'status', 'total_duration')
 
     list_filter = ('status', 'start_time')
 
@@ -17,3 +17,6 @@ class AppointmentAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         return queryset.select_related('client', 'employee').prefetch_related('services')
     
+    @admin.display(description='Fim')
+    def display_end_time(self, obj):
+        return obj.end_time

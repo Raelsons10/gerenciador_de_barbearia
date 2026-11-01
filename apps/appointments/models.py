@@ -13,16 +13,16 @@ class StatusAppointment(models.TextChoices):
     CANCELADO = 'cancelled', 'Cancelado'
 
 class Appointment(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
-    services = models.ManyToManyField(Service)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, verbose_name='Funcionário')
+    services = models.ManyToManyField(Service, verbose_name='Serviços')
     status = models.CharField(choices=StatusAppointment.choices, default=StatusAppointment.AGENDADO, max_length=50)
     observation = models.TextField(verbose_name='Observações', blank=True)
-    start_time = models.DateTimeField()
+    start_time = models.DateTimeField(verbose_name='Início')
 
     # Sum of service durations. Not editable: it is recalculated by the signal
     # whenever the appointment's services change.
-    total_duration = models.DurationField(default=datetime.timedelta, editable=False)
+    total_duration = models.DurationField(default=datetime.timedelta, editable=False, verbose_name='Duração total')
 
     # The duration is only recalculated when the appointment's services change. If the
     # duration of a service changes later, existing appointments are not
