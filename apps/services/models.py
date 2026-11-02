@@ -5,7 +5,7 @@ class Service(models.Model):
     description = models.TextField(verbose_name="Descrição", blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Preço")
     active = models.BooleanField(default=True, verbose_name="Ativo")
-    duration = models.DurationField()
+    duration = models.DurationField(verbose_name='Duração')
 
     class Meta:
         verbose_name = "Serviço"
